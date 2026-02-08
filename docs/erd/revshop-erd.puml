@@ -1,0 +1,78 @@
+@startuml RevShop_ERD
+!define primary_key(x) <b>x</b>
+!define foreign_key(x) <i>x</i>
+
+
+entity User {
+primary_key(id) : INT
+email : VARCHAR
+password_hash : VARCHAR
+role : ENUM(BUYER, SELLER)
+created_at : TIMESTAMP
+}
+
+
+entity Product {
+primary_key(id) : INT
+name : VARCHAR
+price : DECIMAL
+stock : INT
+seller_id : INT
+}
+
+
+entity CartItem {
+primary_key(id) : INT
+foreign_key(user_id) : INT
+foreign_key(product_id) : INT
+quantity : INT
+}
+
+
+entity Order {
+primary_key(id) : INT
+foreign_key(user_id) : INT
+status : VARCHAR
+total_amount : DECIMAL
+created_at : TIMESTAMP
+}
+
+
+entity OrderItem {
+primary_key(id) : INT
+foreign_key(order_id) : INT
+foreign_key(product_id) : INT
+quantity : INT
+price : DECIMAL
+}
+
+
+entity Review {
+primary_key(id) : INT
+foreign_key(user_id) : INT
+foreign_key(product_id) : INT
+rating : INT
+comment : TEXT
+}
+
+
+entity Favorite {
+primary_key(id) : INT
+foreign_key(user_id) : INT
+foreign_key(product_id) : INT
+}
+
+
+User ||--o{ Order
+Order ||--o{ OrderItem
+Product ||--o{ OrderItem
+User ||--o{ CartItem
+Product ||--o{ CartItem
+User ||--o{ Review
+Product ||--o{ Review
+User ||--o{ Favorite
+Product ||--o{ Favorite
+Product }o--|| User : seller
+
+
+@enduml

@@ -1,0 +1,77 @@
+@startuml
+!theme plain
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title RevShop - Application Architecture
+
+package "Presentation Layer (Console UI)" {
+  class AuthMenu
+  class BuyerMenu
+  class SellerMenu
+}
+
+package "Service Layer (Business Logic)" {
+  class UserService
+  class ProductService
+  class CartService
+  class OrderService
+  class ReviewService
+  class FavoriteService
+  class NotificationService
+}
+
+package "Data Access Layer (DAO)" {
+  class UserDAO
+  class ProductDAO
+  class CartDAO
+  class OrderDAO
+  class ReviewDAO
+  class FavoriteDAO
+}
+
+package "Domain Model" {
+  class User
+  class Product
+  class Order
+  class OrderItem
+  class CartItem
+  class Review
+  class Favorite
+}
+
+package "Infrastructure & Security" {
+  class DatabaseConfig
+  class LoggingConfig
+  class PasswordHasher
+  class OTPGenerator
+  class EmailService
+  class EnvLoader
+}
+
+database "MySQL Database" {
+}
+
+' ---- Relationships ----
+AuthMenu --> UserService
+BuyerMenu --> ProductService
+BuyerMenu --> CartService
+BuyerMenu --> OrderService
+SellerMenu --> ProductService
+
+UserService --> UserDAO
+ProductService --> ProductDAO
+CartService --> CartDAO
+OrderService --> OrderDAO
+ReviewService --> ReviewDAO
+FavoriteService --> FavoriteDAO
+
+UserDAO --> "MySQL Database"
+ProductDAO --> "MySQL Database"
+CartDAO --> "MySQL Database"
+OrderDAO --> "MySQL Database"
+
+UserService --> PasswordHasher
+UserService --> OTPGenerator
+NotificationService --> EmailService
+@enduml
