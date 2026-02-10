@@ -77,7 +77,7 @@ public class ProductDAO {
             JOIN categories c ON p.category_id = c.category_id
             JOIN users u ON p.seller_id = u.user_id
             WHERE p.stock > 0
-            ORDER BY p.created_at DESC
+            ORDER BY p.category_id 
             """;
 
         try (Connection conn = DatabaseConfig.getConnection();
@@ -169,7 +169,7 @@ public class ProductDAO {
             JOIN users u ON p.seller_id = u.user_id
             WHERE (p.name LIKE ? OR p.description LIKE ? OR c.name LIKE ?)
             AND p.stock > 0
-            ORDER BY p.created_at DESC
+            ORDER BY p.category_id 
             """;
 
         try (Connection conn = DatabaseConfig.getConnection();
@@ -207,7 +207,7 @@ public class ProductDAO {
             JOIN categories c ON p.category_id = c.category_id
             JOIN users u ON p.seller_id = u.user_id
             WHERE p.category_id = ? AND p.stock > 0
-            ORDER BY p.created_at DESC
+            ORDER BY p.category_id 
             """;
 
         try (Connection conn = DatabaseConfig.getConnection();

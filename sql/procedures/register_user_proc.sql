@@ -1,33 +1,24 @@
-DROP PROCEDURE IF EXISTS register_user_proc;
-
 DELIMITER $$
 
 CREATE PROCEDURE register_user_proc(
-    IN p_email VARCHAR(100),
-    IN p_password_hash VARCHAR(256),
-    IN p_role ENUM('BUYER', 'SELLER')
+    IN p_email VARCHAR(255),
+    IN p_password_hash VARCHAR(255),
+    IN p_role VARCHAR(20)
 )
 BEGIN
-    DECLARE user_count INT;
-    DECLARE new_user_id INT;
+    DECLARE user_is_verified BOOLEAN;
 
-    -- Check if email exists
-    SELECT COUNT(*) INTO user_count FROM users WHERE email = p_email;
-
-    IF user_count > 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Email already registered';
+    -- Sellers are auto-verified, buyers need email verification
+    IF p_role = 'SELLER' THEN
+        SET user_is_verified = TRUE;
     ELSE
-        -- Insert user
-        INSERT INTO users (email, password_hash, role, is_verified)
-        VALUES (p_email, p_password_hash, p_role,
-                CASE WHEN p_role = 'SELLER' THEN TRUE ELSE FALSE END);
-
-        SET new_user_id = LAST_INSERT_ID();
-
-        -- For buyers, verification will be done via OTP later
-        SELECT new_user_id AS user_id;
+        SET user_is_verified = FALSE;
     END IF;
-END $$
+
+    INSERT INTO users (email, password_hash, role, is_verified, created_at)
+    VALUES (p_email, p_password_hash, p_role, user_is_verified, NOW());
+
+    SELECT LAST_INSERT_ID() as user_id;
+END$$
 
 DELIMITER ;
